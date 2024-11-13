@@ -7,4 +7,7 @@ urlpatterns = [
     path("list/",
          views.ProfileView.as_view(),
          name = 'list-accounts'),
+    path("register/",
+         views.RegisterUserAPI.as_view(),
+         name = 'register-account'),
 ]
