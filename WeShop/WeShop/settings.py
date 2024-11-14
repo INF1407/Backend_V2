@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'drf_yasg',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -133,3 +135,11 @@ CORS_ORIGIN_WHITELIST = [
 'http://localhost:8080',
 # Adicione outras origens permitidas, se necessário
 ]
+
+REST_FRAMEWORK = {
+'DEFAULT_SCHEMA_CLASS':
+'rest_framework.schemas.coreapi.AutoSchema',
+'DEFAULT_AUTHENTICATION_CLASSES': [
+'rest_framework.authentication.TokenAuthentication',
+],
+}

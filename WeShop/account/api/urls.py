@@ -10,4 +10,5 @@ urlpatterns = [
     path("register/",
          views.RegisterUserAPI.as_view(),
          name = 'register-account'),
+     path('token-auth/', views.CustomAuthToken.as_view(), name='token-auth'),
 ]
