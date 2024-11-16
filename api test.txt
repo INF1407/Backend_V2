@@ -1,3 +1,5 @@
 curl -X 'POST' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{"username": "neymar", "password": "caralho123"}'
 
-curl -X 'DELETE' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token 99a57a51e342b7842ead40408a227b4ebe52a4ce'
+curl -X 'DELETE' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token af00488090ce7d33b8024b3fdc8b1500e1f44a1d'
+
+curl -X 'PUT' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token af00488090ce7d33b8024b3fdc8b1500e1f44a1d' -H 'Content-Type: application/json' -d '{"old_password": "caralho123", "new_password1": "AiCaralho123", "new_password2": "AiCaralho123"}'
