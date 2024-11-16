@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'rest_framework.authtoken',
+    'django_rest_passwordreset', #para recuperar senha
 ]
 
 MIDDLEWARE = [
@@ -143,3 +144,5 @@ REST_FRAMEWORK = {
 'rest_framework.authentication.TokenAuthentication',
 ],
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

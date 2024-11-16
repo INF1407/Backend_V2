@@ -1,5 +1,14 @@
-curl -X 'POST' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{"username": "neymar", "password": "caralho123"}'
+#Login
+curl -X 'POST' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{"username": "neymar", "password": "Buceta123"}'
 
+#Logout
 curl -X 'DELETE' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token af00488090ce7d33b8024b3fdc8b1500e1f44a1d'
 
+#Reset de Senha
 curl -X 'PUT' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token af00488090ce7d33b8024b3fdc8b1500e1f44a1d' -H 'Content-Type: application/json' -d '{"old_password": "caralho123", "new_password1": "AiCaralho123", "new_password2": "AiCaralho123"}'
+
+#Esqueci a Senha
+curl -X 'POST' 'http://localhost:8000/account/password_reset/' -H 'accept: application/json' -H "Content-Type: application/json" -d '{ "email": "ney@gmail.com" }'
+
+#Recuperação de Senha
+curl -X POST http://localhost:8000/account/password_reset/confirm/ -F "token=96536717b7" -F "password=Buceta123"
