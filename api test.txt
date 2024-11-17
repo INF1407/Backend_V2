@@ -1,5 +1,5 @@
 #Login
-curl -X 'POST' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{"username": "neymar", "password": "Buceta123"}'
+curl -X 'POST' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{"username": "CR7", "password": "Golaço"}'
 
 #Logout
 curl -X 'DELETE' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token af00488090ce7d33b8024b3fdc8b1500e1f44a1d'
@@ -12,3 +12,35 @@ curl -X 'POST' 'http://localhost:8000/account/password_reset/' -H 'accept: appli
 
 #Recuperação de Senha
 curl -X POST http://localhost:8000/account/password_reset/confirm/ -F "token=96536717b7" -F "password=Buceta123"
+
+#Get Profile Data
+curl -X GET http://localhost:8000/account/profile/ -H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539" -H "Content-Type: application/json"
+
+#PUT Profile Data
+curl -X PUT http://localhost:8000/account/profile/ \
+-H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539" \
+-H "Content-Type: application/json" \
+-d '{
+  "first_name": "Cristiano",
+  "last_name": "Ronaldo",
+  "email": "cr7@gmail.com",
+  "date_of_birth": "1990-01-01"
+}'
+
+#DELETE Profile
+curl -X DELETE http://localhost:8000/account/profile/ \
+-H "Authorization: token 0a0611e4bbf3ab26099d8089af6df1f77653ee0a"
+
+#POST create profile
+curl -X POST http://localhost:8000/account/profile/ \
+-H "Content-Type: application/json" \
+-d '{
+  "username": "CR7",
+  "password": "Golaço",
+  "email": "cr7@gmail.com",
+  "date_of_birth": "1990-01-01"
+}'
+
+
+
+

@@ -1,6 +1,7 @@
 from .serializers import ProfileSerializer
 from rest_framework.views import APIView
 from account.models import Profile
+from .serializers import ProfileSerializer
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework import status
@@ -44,7 +45,7 @@ class CustomAuthToken(ObtainAuthToken):
                     token, _ = Token.objects.get_or_create(user=user)
                     login(request, user)
                     return Response({'token': token.key})
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'msg': 'Login ou Senha Inválidos.'}, status=status.HTTP_401_UNAUTHORIZED)
     
     @swagger_auto_schema(
         operation_summary='Obtém o username do usuário',
@@ -190,7 +191,7 @@ class ProfileView(APIView):
         serializer = ProfileSerializer(queryset, many=True)
         return Response(serializer.data)
     
-class RegisterUserAPI(APIView):
+class UserAPI(APIView):
     """
     API to register a new user and their profile.
     """
@@ -229,3 +230,87 @@ class RegisterUserAPI(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        try:
+            token = request.META.get('HTTP_AUTHORIZATION').split(' ')[1]
+            token_obj = Token.objects.get(key=token)
+        except (Token.DoesNotExist, IndexError):
+            return Response({'msg': 'Token não existe.'}, status=status.HTTP_400_BAD_REQUEST)
+        user = token_obj.user
+        if user.is_authenticated:
+            
+            user = token_obj.user
+
+        if user.is_authenticated:
+            # Retrieve the user's profile
+            try:
+                profile = Profile.objects.get(user=user)
+                profile_data = ProfileSerializer(profile).data
+            except Profile.DoesNotExist:
+                profile_data = None
+
+            # Return user and profile details if authenticated
+            user_data = {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'profile': profile_data  # Include profile details
+            }
+            return Response(user_data, status=status.HTTP_200_OK)
+        else:
+            # Return an error if the user is not authenticated
+            return Response({'msg': 'Usuário não autenticado.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+    def put(self, request):
+        try:
+            # Extract the token from the Authorization header
+            token = request.META.get('HTTP_AUTHORIZATION').split(' ')[1]
+            token_obj = Token.objects.get(key=token)
+        except (Token.DoesNotExist, IndexError):
+            return Response({'msg': 'Token não existe.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = token_obj.user
+
+        if user.is_authenticated:
+            # Update user fields
+            user.first_name = request.data.get('first_name', user.first_name)
+            user.last_name = request.data.get('last_name', user.last_name)
+            user.email = request.data.get('email', user.email)
+            user.save()
+
+            # Update profile fields if provided
+            try:
+                profile, created = Profile.objects.get_or_create(user=user)
+                profile.date_of_birth = request.data.get('date_of_birth', profile.date_of_birth)
+                profile.save()
+            except Exception as e:
+                return Response({'msg': f'Erro ao atualizar perfil: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({'msg': 'Usuário atualizado com sucesso.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'msg': 'Usuário não autenticado.'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    def delete(self, request):
+        try:
+            # Extract the token from the Authorization header
+            token = request.META.get('HTTP_AUTHORIZATION').split(' ')[1]
+            token_obj = Token.objects.get(key=token)
+        except (Token.DoesNotExist, IndexError):
+            return Response({'msg': 'Token não existe.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = token_obj.user
+
+        if user.is_authenticated:
+            # Delete user and associated profile
+            try:
+                Profile.objects.filter(user=user).delete()
+                user.delete()
+                return Response({'msg': 'Usuário e perfil excluídos com sucesso.'}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'msg': f'Erro ao excluir usuário: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'msg': 'Usuário não autenticado.'}, status=status.HTTP_401_UNAUTHORIZED)
+            
