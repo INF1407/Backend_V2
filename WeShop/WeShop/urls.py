@@ -24,6 +24,7 @@ schema_view = yasg_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('account.api.urls', namespace = 'account')),
+    path('products/', include('products.api.urls', namespace = 'products')),
 
     path('docs/',
         include_docs_urls(title='Documentação da API')),

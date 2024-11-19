@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework.authtoken',
     'django_rest_passwordreset', #para recuperar senha
+    'products.apps.ProductsConfig',
 ]
 
 MIDDLEWARE = [
