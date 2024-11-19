@@ -58,10 +58,30 @@ curl -X POST http://localhost:8000/products/api/ \
   "available": true
 }'
 
-#GET Product List Details
+#GET Product List
 curl -X GET http://localhost:8000/products/list/ \
 -H "Content-Type: application/json"
 
+#GET Product Details
+curl -X GET http://localhost:8000/products/api/ \
+-H "Content-Type: application/json" \
+-d '{
+  "id": 1,
+  "slug": "example-product"
+}'
 
+#PUT Update Product Information
+curl -X PUT http://localhost:8000/products/api/ \
+-H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539" \
+-H "Content-Type: application/json" \
+-d '{ "id": 1, "slug": "example-product", "name": "Updated Product Name", "description": "Updated description of the product.", "price": 29.99}'
 
+#DELETE Product
+curl -X DELETE http://localhost:8000/products/api/ \
+-H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539" \
+-H "Content-Type: application/json" \
+-d '{
+  "id": 1,
+  "slug": "example-product"
+}'
 

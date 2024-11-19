@@ -66,40 +66,48 @@ class ProductsListAPI(APIView):
 class ProductAPI(APIView):
     
     @swagger_auto_schema(
-        operation_summary="Retrieve product details",
-        operation_description="Fetches and returns the details of a specific product by its ID and slug.",
-        manual_parameters=[
-            openapi.Parameter(
-                'id',
-                openapi.IN_PATH,
-                description="ID of the product",
+    operation_summary="Retrieve product details",
+    operation_description="Fetches and returns the details of a specific product based on its ID and slug provided in the request body.",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=["id", "slug"],
+        properties={
+            "id": openapi.Schema(
                 type=openapi.TYPE_INTEGER,
-                required=True
+                description="ID of the product"
             ),
-            openapi.Parameter(
-                'slug',
-                openapi.IN_PATH,
-                description="Slug of the product",
+            "slug": openapi.Schema(
                 type=openapi.TYPE_STRING,
-                required=True
+                description="Slug of the product"
             )
-        ],
-        responses={
-            200: openapi.Response(
-                description="Product details",
-                schema=ProductSerializer()
-            ),
-            404: openapi.Response(description="Product not found")
         }
-    )
+    ),
+    responses={
+        200: openapi.Response(
+            description="Product details retrieved successfully",
+            schema=ProductSerializer()
+        ),
+        400: openapi.Response(
+            description="Missing or invalid fields in request body",
+            examples={
+                "application/json": {
+                    "error": 'Both "id" and "slug" are required in the request body.'
+                }
+            }
+        ),
+        404: openapi.Response(description="Product not found"),
+        500: openapi.Response(description="Unexpected server error")
+    }
+)
     def get(self, request):
         try:
-            # Parse the request data
-            data = JSONParser().parse(request)
+            
+            data = request.data
             product_id = data.get('id')
             product_slug = data.get('slug')
 
             if not product_id or not product_slug:
+                
                 return Response(
                     {'error': 'Both "id" and "slug" are required in the request body.'},
                     status=status.HTTP_400_BAD_REQUEST
@@ -107,7 +115,7 @@ class ProductAPI(APIView):
 
             # Fetch the product based on id and slug
             product = get_object_or_404(Product, id=product_id, slug=product_slug, available=True)
-
+            
             # Serialize the product
             serializer = ProductSerializer(product)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -154,45 +162,59 @@ class ProductAPI(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @swagger_auto_schema(
-        operation_summary="Update a product",
-        operation_description="Allows the owner of a product to update its details. The user must be authenticated and the product must belong to them.",
-        manual_parameters=[
-            openapi.Parameter(
-                'id',
-                openapi.IN_PATH,
-                description="ID of the product",
+    operation_summary="Update a product",
+    operation_description="Allows the owner of a product to update its details. The `id` and `slug` of the product must be provided in the request body.",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=["id", "slug"],  # This indicates required fields
+        properties={
+            "id": openapi.Schema(
                 type=openapi.TYPE_INTEGER,
-                required=True
+                description="ID of the product"
             ),
-            openapi.Parameter(
-                'slug',
-                openapi.IN_PATH,
-                description="Slug of the product",
+            "slug": openapi.Schema(
                 type=openapi.TYPE_STRING,
-                required=True
-            )
-        ],
-        request_body=ProductSerializer,
-        responses={
-            200: openapi.Response(
-                description="Product updated successfully",
-                schema=ProductSerializer()
+                description="Slug of the product"
             ),
-            400: openapi.Response(
-                description="Invalid data provided"
+            "name": openapi.Schema(
+                type=openapi.TYPE_STRING,
+                description="Updated name of the product"
             ),
-            401: openapi.Response(
-                description="Invalid or missing token"
+            "description": openapi.Schema(
+                type=openapi.TYPE_STRING,
+                description="Updated description of the product"
             ),
-            403: openapi.Response(
-                description="User is not the owner of the product"
+            "price": openapi.Schema(
+                type=openapi.TYPE_NUMBER,
+                format=openapi.FORMAT_FLOAT,
+                description="Updated price of the product"
             ),
-            404: openapi.Response(
-                description="Product not found"
+            "available": openapi.Schema(
+                type=openapi.TYPE_BOOLEAN,
+                description="Whether the product is available"
             )
         }
-    )
-    def put(self, request, id, slug):
+    ),
+    responses={
+        200: openapi.Response(
+            description="Product updated successfully",
+            schema=ProductSerializer()
+        ),
+        400: openapi.Response(
+            description="Invalid data provided",
+            examples={
+                "application/json": {
+                    "error": 'Both "id" and "slug" are required in the request body.'
+                }
+            }
+        ),
+        401: openapi.Response(description="Invalid or missing token"),
+        403: openapi.Response(description="User is not the owner of the product"),
+        404: openapi.Response(description="Product not found"),
+        500: openapi.Response(description="Unexpected server error")
+    }
+)
+    def put(self, request):
         try:
             # Extract the token from the Authorization header
             token = request.META.get('HTTP_AUTHORIZATION').split(' ')[1]
@@ -201,53 +223,63 @@ class ProductAPI(APIView):
         except (Token.DoesNotExist, IndexError):
             return Response({'error': 'Invalid or missing token.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        product = get_object_or_404(Product, id=id, slug=slug)
-        if product.user == user:
-            # Update the product information
-            serializer = ProductSerializer(product, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            
+            data = request.data
+            product_id = data.get('id')
+            product_slug = data.get('slug')
+
+            if not product_id or not product_slug:
+                return Response(
+                    {'error': 'Both "id" and "slug" are required in the request body.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Fetch the product based on id and slug
+            product = get_object_or_404(Product, id=product_id, slug=product_slug)
+
+            # Check if the user is the owner of the product
+            if product.user == user:
+                # Update the product information
+                serializer = ProductSerializer(product, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'error': 'You must be the owner of the product to update it.'}, status=status.HTTP_403_FORBIDDEN)
+                return Response({'error': 'You must be the owner of the product to update it.'}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(
         operation_summary="Delete a product",
-        operation_description="Allows the owner of a product to delete it. The user must be authenticated and the product must belong to them.",
-        manual_parameters=[
-            openapi.Parameter(
-                'id',
-                openapi.IN_PATH,
-                description="ID of the product",
-                type=openapi.TYPE_INTEGER,
-                required=True
-            ),
-            openapi.Parameter(
-                'slug',
-                openapi.IN_PATH,
-                description="Slug of the product",
-                type=openapi.TYPE_STRING,
-                required=True
-            )
-        ],
+        operation_description="Allows the owner of a product to delete it. The `id` and `slug` of the product must be provided in the request body.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["id", "slug"],
+            properties={
+                "id": openapi.Schema(
+                    type=openapi.TYPE_INTEGER,
+                    description="ID of the product"
+                ),
+                "slug": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="Slug of the product"
+                )
+            }
+        ),
         responses={
             204: openapi.Response(
                 description="Product deleted successfully"
             ),
-            401: openapi.Response(
-                description="Invalid or missing token"
-            ),
-            403: openapi.Response(
-                description="User is not the owner of the product"
-            ),
-            404: openapi.Response(
-                description="Product not found"
-            )
+            401: openapi.Response(description="Invalid or missing token"),
+            403: openapi.Response(description="User is not the owner of the product"),
+            404: openapi.Response(description="Product not found"),
+            500: openapi.Response(description="Unexpected server error")
         }
     )
-    def delete(self, request, id, slug):
+    def delete(self, request):
         try:
             # Extract the token from the Authorization header
             token = request.META.get('HTTP_AUTHORIZATION').split(' ')[1]
@@ -256,10 +288,16 @@ class ProductAPI(APIView):
         except (Token.DoesNotExist, IndexError):
             return Response({'error': 'Invalid or missing token.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        product = get_object_or_404(Product, id=id, slug=slug)
-        if product.user == user:
-            # Delete the product
-            product.delete()
-            return Response({'message': 'Product deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response({'error': 'You must be the owner of the product to delete it.'}, status=status.HTTP_403_FORBIDDEN)
+        try:
+            data = request.data
+            product_id = data.get('id')
+            product_slug = data.get('slug')
+            product = get_object_or_404(Product, id=product_id , slug=product_slug)
+            if product.user == user:
+                # Delete the product
+                product.delete()
+                return Response({'message': 'Product deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({'error': 'You must be the owner of the product to delete it.'}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
