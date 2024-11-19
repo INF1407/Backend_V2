@@ -8,12 +8,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view
+from rest_framework.parsers import JSONParser
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-class CategoryAPI(APIView):
+class CategoryListAPI(APIView):
     
     @swagger_auto_schema(
         operation_summary="Retrieve all categories",
@@ -30,9 +30,8 @@ class CategoryAPI(APIView):
         serializer = CategorySerializer(queryset, many=True)
         return Response(serializer.data)
 
-class ProductsAPI(APIView):
-    
-    @api_view(('GET',))
+class ProductsListAPI(APIView):
+
     @swagger_auto_schema(
         operation_summary="Retrieve a list of products",
         operation_description="Fetches and returns a list of available products. Optionally filters by category if a category_slug is provided.",
@@ -53,18 +52,19 @@ class ProductsAPI(APIView):
             404: openapi.Response(description="Category not found")
         }
     )
-    def get_products_list(self, request, category_slug=None):
-        
+    def get(self, request):
+        category_slug = request.query_params.get('category_slug', None)
         if category_slug:
             category = get_object_or_404(Category, slug=category_slug)
-            products = products.filter(category=category)
+            products = Product.objects.filter(category=category, available=True)
         else:
             products = Product.objects.filter(available=True)
-        
+
         serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ProductAPI(APIView):
     
-    @api_view(('GET',))
     @swagger_auto_schema(
         operation_summary="Retrieve product details",
         operation_description="Fetches and returns the details of a specific product by its ID and slug.",
@@ -92,11 +92,28 @@ class ProductsAPI(APIView):
             404: openapi.Response(description="Product not found")
         }
     )
-    def get_product_detail(self, request, id, slug):
-        product = get_object_or_404(Product, id=id, slug=slug, available=True)
-        serializer = ProductSerializer(data=product)
-        
-        return Response(serializer.data)
+    def get(self, request):
+        try:
+            # Parse the request data
+            data = JSONParser().parse(request)
+            product_id = data.get('id')
+            product_slug = data.get('slug')
+
+            if not product_id or not product_slug:
+                return Response(
+                    {'error': 'Both "id" and "slug" are required in the request body.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Fetch the product based on id and slug
+            product = get_object_or_404(Product, id=product_id, slug=product_slug, available=True)
+
+            # Serialize the product
+            serializer = ProductSerializer(product)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     @swagger_auto_schema(
         operation_summary="Create a new product",
@@ -130,6 +147,7 @@ class ProductsAPI(APIView):
         serializer = ProductSerializer(data=data)
 
         if serializer.is_valid():
+            
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:

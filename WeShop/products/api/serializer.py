@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from products.models import Category, Product
+from django.contrib.auth.models import User
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,9 +8,8 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'slug']
 
 class ProductSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()  # Display the username of the product owner
-    category = serializers.StringRelatedField()  # Display the category name instead of ID
-
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  # Accept category ID for write operations
     class Meta:
         model = Product
         fields = [

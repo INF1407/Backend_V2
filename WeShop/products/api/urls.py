@@ -1,13 +1,16 @@
-from django.urls import path, include
+from django.urls import path
 from . import views
 
 app_name = 'products'
 
 urlpatterns = [
-    path("merchandize/", 
-        views.ProductsAPI.as_view(),
-        name = 'merchandize'),
+    path("api/", 
+        views.ProductAPI.as_view(),
+        name = 'api-products'),
+    path("list/",
+         views.ProductsListAPI.as_view(),
+         name = 'list-products'),
     path("categories/",
-         views.CategoryAPI.as_view(),
+         views.CategoryListAPI.as_view(),
          name = 'categories'),
 ]

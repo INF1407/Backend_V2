@@ -41,6 +41,27 @@ curl -X POST http://localhost:8000/account/profile/ \
   "date_of_birth": "1990-01-01"
 }'
 
+#GET Categories
+curl -X GET http://localhost:8000/products/categories/ \
+-H "Content-Type: application/json"
+
+#POST create products
+curl -X POST http://localhost:8000/products/api/ \
+-H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539" \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "Example Product",
+  "slug": "example-product",
+  "category": 1,
+  "description": "This is an example product.",
+  "price": 19.99,
+  "available": true
+}'
+
+#GET Product List Details
+curl -X GET http://localhost:8000/products/list/ \
+-H "Content-Type: application/json"
+
 
 
 
