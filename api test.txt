@@ -50,11 +50,11 @@ curl -X POST http://localhost:8000/products/api/ \
 -H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539" \
 -H "Content-Type: application/json" \
 -d '{
-  "name": "Example Product",
-  "slug": "example-product",
+  "name": "Example Product 2",
+  "slug": "example-product-2",
   "category": 1,
   "description": "This is an example product.",
-  "price": 19.99,
+  "price": 39.99,
   "available": true
 }'
 
@@ -83,5 +83,20 @@ curl -X DELETE http://localhost:8000/products/api/ \
 -d '{
   "id": 1,
   "slug": "example-product"
+}'
+
+#GET Cart 
+curl -X GET http://localhost:8000/cart/api/ \
+-H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539"
+
+#PUT Cart
+curl -X PUT http://localhost:8000/cart/api/ \
+-H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539" \
+-H "Content-Type: application/json" \
+-d '{
+  "items": {
+    "2": 2,
+    "3": 5
+  }
 }'
 
