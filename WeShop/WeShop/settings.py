@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_rest_passwordreset', #para recuperar senha
     'products.apps.ProductsConfig',
     'cart.apps.CartConfig',
+    'orders.apps.OrdersConfig',
 ]
 
 MIDDLEWARE = [

@@ -2,7 +2,7 @@
 curl -X 'POST' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{"username": "CR7", "password": "Golaço"}'
 
 #Logout
-curl -X 'DELETE' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token af00488090ce7d33b8024b3fdc8b1500e1f44a1d'
+curl -X 'DELETE' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539'
 
 #Reset de Senha
 curl -X 'PUT' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token af00488090ce7d33b8024b3fdc8b1500e1f44a1d' -H 'Content-Type: application/json' -d '{"old_password": "caralho123", "new_password1": "AiCaralho123", "new_password2": "AiCaralho123"}'
@@ -47,14 +47,14 @@ curl -X GET http://localhost:8000/products/categories/ \
 
 #POST create products
 curl -X POST http://localhost:8000/products/api/ \
--H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539" \
+-H "Authorization: token 506ce2dad568933974a690bd225cc92f3be29c0f" \
 -H "Content-Type: application/json" \
 -d '{
-  "name": "Example Product 2",
-  "slug": "example-product-2",
+  "name": "Example Product 3",
+  "slug": "example-product-3",
   "category": 1,
   "description": "This is an example product.",
-  "price": 39.99,
+  "price": 19.99,
   "available": true
 }'
 
@@ -66,15 +66,15 @@ curl -X GET http://localhost:8000/products/list/ \
 curl -X GET http://localhost:8000/products/api/ \
 -H "Content-Type: application/json" \
 -d '{
-  "id": 1,
-  "slug": "example-product"
+  "id": 4,
+  "slug": "example-product-3"
 }'
 
 #PUT Update Product Information
 curl -X PUT http://localhost:8000/products/api/ \
--H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539" \
+-H "Authorization: token 506ce2dad568933974a690bd225cc92f3be29c0f" \
 -H "Content-Type: application/json" \
--d '{ "id": 1, "slug": "example-product", "name": "Updated Product Name", "description": "Updated description of the product.", "price": 29.99}'
+-d '{ "id": 4, "slug": "example-product-3", "name": "Updated Product Name", "description": "Updated description of the product.", "price": 29.99}'
 
 #DELETE Product
 curl -X DELETE http://localhost:8000/products/api/ \
@@ -91,12 +91,13 @@ curl -X GET http://localhost:8000/cart/api/ \
 
 #PUT Cart
 curl -X PUT http://localhost:8000/cart/api/ \
--H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539" \
+-H "Authorization: token 506ce2dad568933974a690bd225cc92f3be29c0f" \
 -H "Content-Type: application/json" \
 -d '{
   "items": {
     "2": 2,
     "3": 5
+    "4": 10
   }
 }'
 

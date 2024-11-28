@@ -67,31 +67,33 @@ class ProductAPI(APIView):
     
     @swagger_auto_schema(
     operation_summary="Retrieve product details",
-    operation_description="Fetches and returns the details of a specific product based on its ID and slug provided in the request body.",
-    request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        required=["id", "slug"],
-        properties={
-            "id": openapi.Schema(
-                type=openapi.TYPE_INTEGER,
-                description="ID of the product"
-            ),
-            "slug": openapi.Schema(
-                type=openapi.TYPE_STRING,
-                description="Slug of the product"
-            )
-        }
-    ),
+    operation_description="Fetches and returns the details of a specific product based on its ID and slug provided as query parameters.",
+    manual_parameters=[
+        openapi.Parameter(
+            'id',
+            openapi.IN_QUERY,
+            description="ID of the product",
+            type=openapi.TYPE_INTEGER,
+            required=True
+        ),
+        openapi.Parameter(
+            'slug',
+            openapi.IN_QUERY,
+            description="Slug of the product",
+            type=openapi.TYPE_STRING,
+            required=True
+        )
+    ],
     responses={
         200: openapi.Response(
             description="Product details retrieved successfully",
             schema=ProductSerializer()
         ),
         400: openapi.Response(
-            description="Missing or invalid fields in request body",
+            description="Missing or invalid query parameters",
             examples={
                 "application/json": {
-                    "error": 'Both "id" and "slug" are required in the request body.'
+                    "error": 'Both "id" and "slug" are required as query parameters.'
                 }
             }
         ),
