@@ -26,6 +26,7 @@ urlpatterns = [
     path('account/', include('account.api.urls', namespace = 'account')),
     path('products/', include('products.api.urls', namespace = 'products')),
     path('cart/', include('cart.api.urls', namespace = 'cart')),
+    path('orders/', include('orders.api.urls', namespace = 'orders')),
 
     path('docs/',
         include_docs_urls(title='Documentação da API')),

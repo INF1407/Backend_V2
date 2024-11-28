@@ -14,7 +14,7 @@ curl -X 'POST' 'http://localhost:8000/account/password_reset/' -H 'accept: appli
 curl -X POST http://localhost:8000/account/password_reset/confirm/ -F "token=96536717b7" -F "password=Buceta123"
 
 #Get Profile Data
-curl -X GET http://localhost:8000/account/profile/ -H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539" -H "Content-Type: application/json"
+curl -X GET http://localhost:8000/account/profile/ -H "Authorization: token 506ce2dad568933974a690bd225cc92f3be29c0f" -H "Content-Type: application/json"
 
 #PUT Profile Data
 curl -X PUT http://localhost:8000/account/profile/ \
@@ -87,7 +87,7 @@ curl -X DELETE http://localhost:8000/products/api/ \
 
 #GET Cart 
 curl -X GET http://localhost:8000/cart/api/ \
--H "Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539"
+-H "Authorization: token 506ce2dad568933974a690bd225cc92f3be29c0f"
 
 #PUT Cart
 curl -X PUT http://localhost:8000/cart/api/ \
@@ -96,8 +96,30 @@ curl -X PUT http://localhost:8000/cart/api/ \
 -d '{
   "items": {
     "2": 2,
-    "3": 5
-    "4": 10
+    "3": 5,
+    "4": 1
   }
 }'
+
+#POST Orders
+curl -X POST http://localhost:8000/orders/api/ \
+-H "Authorization: token 506ce2dad568933974a690bd225cc92f3be29c0f" \
+-H "Content-Type: application/json" \
+-d '{
+  "order_data": {
+    "first_name": "Cristiano",
+    "last_name": "Ronaldo",
+    "email": "cr7@gmail.com",
+    "address": "123 Main St",
+    "postal_code": "12345",
+    "city": "Metropolis"
+  }
+}'
+
+#GET Orders
+curl -X GET http://localhost:8000/orders/api/ \
+-H "Authorization: token 506ce2dad568933974a690bd225cc92f3be29c0f" \
+-H "Content-Type: application/json"
+
+
 
