@@ -66,66 +66,66 @@ class ProductsListAPI(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class ProductAPI(APIView):
-    
+
     @swagger_auto_schema(
-    operation_summary="Retrieve product details",
-    operation_description="Fetches and returns the details of a specific product based on its ID and slug provided as query parameters.",
-    manual_parameters=[
-        openapi.Parameter(
-            'id',
-            openapi.IN_QUERY,
-            description="ID of the product",
-            type=openapi.TYPE_INTEGER,
-            required=True
-        ),
-        openapi.Parameter(
-            'slug',
-            openapi.IN_QUERY,
-            description="Slug of the product",
-            type=openapi.TYPE_STRING,
-            required=True
-        )
-    ],
-    responses={
-        200: openapi.Response(
-            description="Product details retrieved successfully",
-            schema=ProductSerializer()
-        ),
-        400: openapi.Response(
-            description="Missing or invalid query parameters",
-            examples={
-                "application/json": {
-                    "error": 'Both "id" and "slug" are required as query parameters.'
+        operation_summary="Retrieve product details",
+        operation_description="Fetches and returns the details of a specific product based on its ID and slug provided as query parameters.",
+        manual_parameters=[
+            openapi.Parameter(
+                'id',
+                openapi.IN_QUERY,
+                description="ID of the product",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+            openapi.Parameter(
+                'slug',
+                openapi.IN_QUERY,
+                description="Slug of the product",
+                type=openapi.TYPE_STRING,
+                required=True
+            )
+        ],
+        responses={
+            200: openapi.Response(
+                description="Product details retrieved successfully",
+                schema=ProductSerializer()
+            ),
+            400: openapi.Response(
+                description="Missing or invalid query parameters",
+                examples={
+                    "application/json": {
+                        "error": 'Both "id" and "slug" are required as query parameters.'
+                    }
                 }
-            }
-        ),
-        404: openapi.Response(description="Product not found"),
-        500: openapi.Response(description="Unexpected server error")
-    }
-)
+            ),
+            404: openapi.Response(description="Product not found"),
+            500: openapi.Response(description="Unexpected server error")
+        }
+    )
     def get(self, request):
         try:
-            
-            data = request.data
-            product_id = data.get('id')
-            product_slug = data.get('slug')
+            # Extract query parameters
+            product_id = request.query_params.get('id')
+            product_slug = request.query_params.get('slug')
 
+            # Validate the query parameters
             if not product_id or not product_slug:
-                
                 return Response(
-                    {'error': 'Both "id" and "slug" are required in the request body.'},
+                    {'error': 'Both "id" and "slug" are required as query parameters.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
             # Fetch the product based on id and slug
             product = get_object_or_404(Product, id=product_id, slug=product_slug, available=True)
-            
+
             # Serialize the product
             serializer = ProductSerializer(product)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
     @swagger_auto_schema(
         operation_summary="Create a new product",
