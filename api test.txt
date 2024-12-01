@@ -2,7 +2,10 @@
 curl -X 'POST' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{"username": "CR7", "password": "Golaço"}'
 
 #Logout
-curl -X 'DELETE' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token 61c6d20f2940656515efd2e52a4efa257707a539'
+curl -X 'DELETE' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token 506ce2dad568933974a690bd225cc92f3be29c0f'
+
+#Authenticate
+curl -X 'GET' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token 506ce2dad568933974a690bd225cc92f3be29c0f'
 
 #Reset de Senha
 curl -X 'PUT' 'http://localhost:8000/account/token-auth/' -H 'accept: application/json' -H 'Authorization: token af00488090ce7d33b8024b3fdc8b1500e1f44a1d' -H 'Content-Type: application/json' -d '{"old_password": "caralho123", "new_password1": "AiCaralho123", "new_password2": "AiCaralho123"}'
@@ -11,10 +14,10 @@ curl -X 'PUT' 'http://localhost:8000/account/token-auth/' -H 'accept: applicatio
 curl -X 'POST' 'http://localhost:8000/account/password_reset/' -H 'accept: application/json' -H "Content-Type: application/json" -d '{ "email": "ney@gmail.com" }'
 
 #Recuperação de Senha
-curl -X POST http://localhost:8000/account/password_reset/confirm/ -F "token=96536717b7" -F "password=Buceta123"
+curl -X POST http://localhost:8000/account/password_reset/confirm/ -F "token=ea0d66de64f10e964a291e255fa711d056d7c0b384e27d3" -F "password=NovaSenha@1"
 
 #Get Profile Data
-curl -X GET http://localhost:8000/account/profile/ -H "Authorization: token 506ce2dad568933974a690bd225cc92f3be29c0f" -H "Content-Type: application/json"
+curl -X GET http://localhost:8000/account/profile/ -H "Authorization: token 5f6f7ca8b7c56f8b1aa7cda819ca61f76a4b8bd0" -H "Content-Type: application/json"
 
 #PUT Profile Data
 curl -X PUT http://localhost:8000/account/profile/ \
@@ -47,7 +50,7 @@ curl -X GET http://localhost:8000/products/categories/ \
 
 #POST create products
 curl -X POST http://localhost:8000/products/api/ \
--H "Authorization: token 506ce2dad568933974a690bd225cc92f3be29c0f" \
+-H "Authorization: token xxxx" \
 -H "Content-Type: application/json" \
 -d '{
   "name": "Example Product 3",
@@ -55,6 +58,7 @@ curl -X POST http://localhost:8000/products/api/ \
   "category": 1,
   "description": "This is an example product.",
   "price": 19.99,
+  "image": "path to a downloadable image
   "available": true
 }'
 

@@ -1,6 +1,8 @@
 from .serializer import CategorySerializer, ProductSerializer
 from products.models import Product, Category
 
+from django.utils.text import slugify
+
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 
@@ -154,6 +156,14 @@ class ProductAPI(APIView):
         # Parse and validate product data
         data = request.data.copy()
         data['user'] = user.id  # Associate the product with the authenticated user
+        
+        # Automatically generate the slug based on the product name
+        name = data.get('name')
+        if not name:
+            return Response({'error': 'The name field is required to generate a slug.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+        data['slug'] = slugify(name)  # Generate slug using the name
+        
         serializer = ProductSerializer(data=data)
 
         if serializer.is_valid():
