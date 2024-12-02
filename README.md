@@ -30,16 +30,18 @@ Clone o repositório:
 git clone https://github.com/INF1407/Backend_V2.git
 cd Backend_V2
 
-Instale as dependências:
+1) Instale as dependências:
 
 pip install -r requirements.txt
 
-Realize as migrações:
+2) Realize as migrações:
 
 python manage.py migrate
 
-Inicie o servidor:
+3) Inicie o servidor:
 
 python manage.py runserver
 
 Documentação disponível em /swagger/.
+
+
