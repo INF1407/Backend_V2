@@ -12,11 +12,11 @@
 - Shopping cart
 - Login/Cadastro
 
-##Funcionamento do Backend
+## Funcionamento do Backend
 - Operações CRUD para produtos, pedidos e usuários.
 - Sistema de autenticação com endpoints protegidos.
 - Endpoints documentados com Swagger.
 
-##Link do Backend Publicado
+## Link do Backend Publicado
 
 👉 https://we-shop-3f005a9a94c2.herokuapp.com/
