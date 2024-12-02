@@ -21,10 +21,11 @@
 
 👉 https://we-shop-3f005a9a94c2.herokuapp.com/
 
-Instruções para Rodar Localmente
-Backend
 
-    Clone o repositório:
+
+## Instruções para Rodar Localmente
+
+Clone o repositório:
 
 git clone https://github.com/INF1407/Backend_V2.git
 cd Backend_V2
