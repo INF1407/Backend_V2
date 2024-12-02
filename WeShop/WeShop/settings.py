@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
+import django_on_heroku
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -151,3 +153,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Media file settings
 MEDIA_URL = '/media/'  # URL prefix for media files
 MEDIA_ROOT = BASE_DIR / 'media'  # Absolute path to media directory
+
+django_on_heroku.settings(locals())
